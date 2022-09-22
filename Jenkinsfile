@@ -5,13 +5,13 @@ pipeline {
         stages {
             stage('Source') {
                 steps {
-                    git url: 'https://github.com/shanthshivam/sample-java-maven.git'
+                    git url: 'https://github.com/Prakruthi0306/Jenkins-Docker1.git'
                 }
             }
             stage('Build') {
                 steps {
                     script {
-                        def mvnHome = tool 'M3'
+                        def mvnHome = tool 'MAVEN_HOME'
                         bat "${mvnHome}\\bin\\mvn -B verify"
                     }
                 }
@@ -19,9 +19,9 @@ pipeline {
             stage('SonarQube Analysis') {
                 steps {
                     script {
-                        def mvnHome = tool 'M3'
+                        def mvnHome = tool 'MAVEN_HOME'
                         withSonarQubeEnv() {
-                            bat "${mvnHome}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=java-maven"
+                            bat "${mvnHome}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=JenkinsDocker"
                         }
                     }
                 }
@@ -43,9 +43,9 @@ pipeline {
                     script{
                             def server = Artifactory.server 'artifactory'
                             def rtMaven = Artifactory.newMavenBuild()
-                            //rtMaven.resolver server: server, releaseRepo: 'jenkins-devops', snapshotRepo: 'jenkins-devops-snapshot'
-                            rtMaven.deployer server: server, releaseRepo: 'jenkins-devops', snapshotRepo: 'jenkins-devops-snapshot'
-                            rtMaven.tool = 'M3'
+                            //rtMaven.resolver server: server, releaseRepo: 'JenkinsDocker', snapshotRepo: 'Jenkinssnapshot'
+                            rtMaven.deployer server: server, releaseRepo: 'JenkinsDocker', snapshotRepo: 'Jenkinssnapshot'
+                            rtMaven.tool = 'MAVEN_HOME'
                             
                             def buildInfo = rtMaven.run pom: '$workspace/pom.xml', goals: 'clean install'
                             rtMaven.deployer.deployArtifacts = true
