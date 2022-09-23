@@ -27,11 +27,7 @@ pipeline {
                 }
             }
             
-            stage('Test') {
-                steps {
-                    step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
-                }
-            }
+           
             stage('Packaging') {
                 steps {
                     step([$class: 'ArtifactArchiver', artifacts: '**/target/*.jar', fingerprint: true])
