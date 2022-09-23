@@ -5,7 +5,7 @@ pipeline {
         stages {
             stage('Source') {
                 steps {
-                    git url: 'https://github.com/Prakruthi0306/Jenkins-Docker1.git'
+                    git url: 'https://github.com/Prakruthi0306/artifactory_pipeline.git'
                 }
             }
             stage('Build') {
@@ -21,12 +21,13 @@ pipeline {
                     script {
                         def mvnHome = tool 'MAVEN_HOME'
                         withSonarQubeEnv() {
-                            bat "${mvnHome}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=JenkinsDocker"
+                            bat "${mvnHome}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=Sonar"
                         }
                     }
                 }
             }
             
+           
             stage('Packaging') {
                 steps {
                     step([$class: 'ArtifactArchiver', artifacts: '**/target/*.jar', fingerprint: true])
@@ -36,7 +37,7 @@ pipeline {
             stage ("Artifactory Publish"){
                 steps{
                     script{
-                            def server = Artifactory.server 'artifactory'
+                            def server = Artifactory.server 'Artifactory'
                             def rtMaven = Artifactory.newMavenBuild()
                             //rtMaven.resolver server: server, releaseRepo: 'JenkinsDocker', snapshotRepo: 'Jenkinssnapshot'
                             rtMaven.deployer server: server, releaseRepo: 'JenkinsDocker', snapshotRepo: 'Jenkinssnapshot'
@@ -51,4 +52,6 @@ pipeline {
                 }
         }
         }
+}
+
 }
